@@ -3,6 +3,8 @@
 Hermes Agent (by [Nous Research](https://github.com/NousResearch)) 的个人配置备份与分享仓库。
 包含完整的 config.yaml 和两个用户 provider 插件。
 
+> 配置快照：Hermes Agent v0.18.0 (2026-07-01, upstream beaa1a08)
+
 ## 仓库内容
 
 ```
@@ -64,14 +66,17 @@ git push
 此仓库不含任何 API key 或敏感信息。使用前需在 `~/.hermes/.env` 中手动配置：
 
 ```dotenv
-# Z.AI / GLM Coding Plan
+# Z.AI / GLM（中国版 Coding Plan 端点；国际版可省略 GLM_BASE_URL）
 GLM_API_KEY=sk-***
+GLM_BASE_URL=https://open.bigmodel.cn/api/coding/paas/v4
 
 # Kimi Coding Plan（sk-kimi- 前缀的 key）
-KIMI_API_KEY=sk-kimi-***
-
+KIMI_CODING_API_KEY=sk-kimi-***
 # kimi-coding 插件前置条件：覆盖默认路由，切换到 OpenAI 协议
 KIMI_BASE_URL=https://api.kimi.com/coding/v1
+
+# DeepSeek（fallback provider）
+DEEPSEEK_API_KEY=sk-***
 ```
 
 config.yaml 中对应的配置项（恢复时随 config.yaml 一起部署，无需手动设置）：
@@ -95,6 +100,7 @@ model:
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) v0.18.0+
 - Z.AI / GLM API key（Coding Plan 或按量）
 - Kimi Coding Plan API key（sk-kimi- 前缀）
+- DeepSeek API key（fallback provider）
 
 ## 官方 PR 追踪
 

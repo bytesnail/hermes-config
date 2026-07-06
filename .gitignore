@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 *.bak
 *.bak.*
+
+# Editor / OS artifacts
+.DS_Store
+*.swp
+*~
+*.swo
