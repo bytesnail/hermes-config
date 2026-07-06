@@ -3,7 +3,7 @@
 Hermes Agent (by [Nous Research](https://github.com/NousResearch)) 的个人配置备份与分享仓库。
 包含完整的 config.yaml 和两个用户 provider 插件。
 
-> 配置快照：Hermes Agent v0.18.0 (2026-07-01, upstream beaa1a08)
+> 配置快照：Hermes Agent v0.18.0 (2026-07-01, upstream 7426c09b)
 
 ## 仓库内容
 
@@ -106,8 +106,8 @@ model:
 
 以下 PR 合入后，对应的用户插件可能不再需要（届时参考各插件 README 中的判定矩阵）：
 
-- [#58884](https://github.com/NousResearch/hermes-agent/pull/58884) GLM-5.2 reasoning_effort controls (salvage #51108) — Open
-- [#51108](https://github.com/NousResearch/hermes-agent/pull/51108) GLM-5.2 reasoning_effort (原始 PR，已被 #58884 salvage) — Open
+- [#58884](https://github.com/NousResearch/hermes-agent/pull/58884) GLM-5.2 reasoning_effort controls (salvage #51108) — **Merged** 2026-07-05（内置新增 reasoning_effort 映射，但 enabled=False/minimal 有缺陷，zai 插件仍需要）
+- [#51108](https://github.com/NousResearch/hermes-agent/pull/51108) GLM-5.2 reasoning_effort (原始 PR，已被 #58884 salvage) — **Closed**
 - [#24915](https://github.com/NousResearch/hermes-agent/pull/24915) Z.AI 综合修复 (tool_stream + thinking) — Open
 - [#51195](https://github.com/NousResearch/hermes-agent/pull/51195) GLM reasoning_content echo-back + max_tokens — Open
 
