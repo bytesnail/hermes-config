@@ -3,7 +3,7 @@
 Hermes Agent (by [Nous Research](https://github.com/NousResearch)) 的个人配置备份与分享仓库。
 包含完整的 config.yaml 和两个用户 provider 插件。
 
-> 配置快照：Hermes Agent v0.18.0 (2026-07-01, upstream 7426c09b)
+> 配置快照：Hermes Agent v0.18.2 (2026-07-07, upstream b9b463f3)
 
 ## 仓库内容
 
