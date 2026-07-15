@@ -485,6 +485,7 @@ platform_toolsets:
     - tts
     - vision
     - web
+    - mcp-codegraph
   discord:
     - hermes-discord
   google_chat:
@@ -680,3 +681,12 @@ x_search:
   model: grok-4.20-reasoning
   retries: 2
   timeout_seconds: 180
+mcp_servers:
+  codegraph:
+    command: codegraph
+    args:
+      - serve
+      - --mcp
+    enabled: true
+    env:
+      CODEGRAPH_MCP_TOOLS: status,explore,node,search,callers,callees,impact,files

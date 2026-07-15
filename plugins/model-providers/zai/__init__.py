@@ -201,6 +201,12 @@ class ZaiProfile(ProviderProfile):
         extra_body: dict[str, Any] = {}
         top_level: dict[str, Any] = {}
 
+        # 延迟应用 reasoning_pad monkey-patch（首次 API 请求时触发）。
+        # 不能在模块级别调用，否则会通过 run_agent → model_tools →
+        # tools.registry → tools.approval 导入链在 main() 之前冻结
+        # _YOLO_MODE_FROZEN，导致 hermes --yolo 审批旁路失效。
+        _apply_reasoning_pad_patch()
+
         if _is_glm_5_2(model):
             # GLM-5.2: thinking + reasoning_effort
             extra_body, top_level = _glm_5_2_reasoning_extras(reasoning_config)
@@ -237,8 +243,10 @@ register_provider(zai)
 # ── reasoning_content 回传保持 (#51195 方案) ──────────────────
 #
 # _needs_thinking_reasoning_pad() 硬编码在 run_agent.py 中，无法通过
-# ProviderProfile API 覆盖。这里在模块导入时对 AIAgent 做 monkey-patch，
-# 为 Z.AI/GLM 添加 reasoning_content echo-back 检测。
+# ProviderProfile API 覆盖。在 build_api_kwargs_extras()（首次 API 请求）
+# 中对 AIAgent 做 monkey-patch，为 Z.AI/GLM 添加 reasoning_content echo-back 检测。
+# 不能在模块级别调用，否则会通过 run_agent → model_tools → tools.registry
+# → tools.approval 导入链在 main() 之前冻结 _YOLO_MODE_FROZEN（#60328）。
 #
 # 原理：GLM 在工具调用回合要求 reasoning_content 被回传，缺失时可能
 # 导致服务端不稳定（表现为限流类错误而非清晰的 schema 报错）。
@@ -251,8 +259,17 @@ register_provider(zai)
 #     ProviderProfile API 实现，需单独评估是否已被官方覆盖。
 
 
+_patch_applied = False
+
+
 def _apply_reasoning_pad_patch() -> None:
-    """为 AIAgent._needs_thinking_reasoning_pad 追加 GLM 检测。"""
+    """为 AIAgent._needs_thinking_reasoning_pad 追加 GLM 检测。
+
+    幂等：通过 _patch_applied 标志保证只执行一次，可在运行期安全重复调用。
+    """
+    global _patch_applied
+    if _patch_applied:
+        return
     try:
         from run_agent import AIAgent
         from utils import base_url_host_matches
@@ -275,14 +292,11 @@ def _apply_reasoning_pad_patch() -> None:
             return False
 
         AIAgent._needs_thinking_reasoning_pad = _patched_method
+        _patch_applied = True
     except Exception:
         # 导入失败时静默跳过 —— provider profile 仍正常工作，
         # 仅缺少 reasoning_content 回传保持功能。
-        # 常见于 run_agent.py 尚未加载完毕的早期初始化阶段。
         import logging
         logging.getLogger("hermes.plugins.zai").debug(
             "reasoning_pad patch skipped", exc_info=True
         )
-
-
-_apply_reasoning_pad_patch()
